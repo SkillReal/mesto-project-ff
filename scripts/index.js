@@ -14,6 +14,7 @@ function createCard(info, delCard) {
 
   cardElement.querySelector(".card__title").textContent = info.name;
   cardElement.querySelector(".card__image").src = info.link;
+  cardElement.querySelector(".card__image").setAttribute('alt','Картинка с видом на' + ' ' + info.name);
 
   const delButton = cardElement.querySelector(".card__delete-button");
   delButton.addEventListener("click", delCard);
