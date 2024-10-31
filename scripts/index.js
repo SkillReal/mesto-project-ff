@@ -31,3 +31,5 @@ function delCard(event) {
 initialCards.forEach((cardElement) => {
   container.append(createCard(cardElement, delCard));
 });
+
+// проверка работы 
