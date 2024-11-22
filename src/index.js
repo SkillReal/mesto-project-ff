@@ -1,39 +1,68 @@
-import {
-  initialCards, 
-  
-} from "./components/cards.js";
-import './pages/index.css';
+import { initialCards } from "./components/cards.js";
 
-// @todo: Темплейт карточки
+import { createCard, delCard, OpPopup } from "./components/card.js";
 
-const template = document.querySelector("#card-template").content;
+import { openModal, closeModal} from "./components/modal.js";
 
-// @todo: DOM узлы
+import "./pages/index.css";
+
+// DOM узлы;
 
 const container = document.querySelector(".places__list");
-const addButton = document.querySelector(".profile__add-button");
+const openAddButton = document.querySelector(".profile__add-button");
+const openEditButton = document.querySelector(".profile__edit-button");
+const closeButton = document.querySelectorAll(".popup__close");
+const generalPopup = document.querySelectorAll(".popup");
 
-// @todo: Функция создания карточки
+const popupTypeEdit = document.querySelector(".popup_type_edit");
+const popupTypeNewCard = document.querySelector(".popup_type_new-card");
 
- const createCard = function (arrElement, deleteCard) {
-  const cardElement = template.querySelector(".card").cloneNode(true); // клонирую шаблон tamplate
-
-  cardElement.querySelector(".card__title").textContent = arrElement.name; //добавил название картинки из initialCards
-  cardElement.querySelector(".card__image").src = arrElement.link; //добавил адрес картинки из initialCards
-  cardElement.querySelector(".card__image").setAttribute('alt','Картинка с видом на' + ' ' + arrElement.name); //добавил атрибут alt для получаемой картинки
-
-  const delButton = cardElement.querySelector(".card__delete-button");
-  delButton.addEventListener("click", deleteCard); //добавил к иконке удаления обработчик клика, по которому будет вызван переданный в аргументах колбэк.
-  return cardElement;
-}
-// @todo: Функция удаления карточки
-
-const delCard = function (event) {
-  event.target.closest(".card").remove();
-}
-
-// @todo: Вывести карточки на страницу
-
-initialCards.forEach((arrElem) => {   // перебрал массив объектов initialCards
-  container.append(createCard(arrElem, delCard)); //добавляем в конец .places__list карточки
+initialCards.forEach((arrElem) => {
+  // перебрал массив объектов initialCards;
+  container.append(createCard(arrElem, delCard, OpPopup)); //добавляем в конец .places__list карточки;
 });
+
+const clickOpenButton = function (button, popup) {
+  button.addEventListener("click", function () {
+    openModal(popup);
+  });
+};
+
+clickOpenButton(openAddButton, popupTypeNewCard);
+clickOpenButton(openEditButton, popupTypeEdit);
+
+// функция закрытия всех попапов на крестик;
+
+closeButton.forEach(function (item) {
+  // перебрал псевдомассив кнопок закрытия попапов;
+  item.addEventListener("click", function (evt) {
+    const popup = evt.target.closest(".popup"); //нашел открытый попап для закрытия;
+    closeModal(popup);
+  });
+});
+
+
+generalPopup.forEach(function (item) {        
+  item.addEventListener("click", function (evt) {
+    const popup = evt.target.closest(".popup");
+    if (evt.currentTarget === evt.target) {                
+      closeModal(popup);
+    }
+  });
+});
+
+
+// функция закрытия всех попапов кликом на оверлей;
+
+generalPopup.forEach(function (item) {        
+  item.addEventListener("click", function (evt) {
+    const popup = evt.target.closest(".popup");
+    if (evt.currentTarget === evt.target) {                
+      closeModal(popup);
+    }
+  });
+});
+// evt.currentTarget — элемент, где сработал обработчик;
+// evt.target — элемент, где возникло событие;
+
+
