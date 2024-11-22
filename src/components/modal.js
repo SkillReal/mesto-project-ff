@@ -23,4 +23,4 @@ const closeModalEscape = function (event) {
   }
 };
 
-export { openModal, closeModal};
+export { openModal, closeModal };

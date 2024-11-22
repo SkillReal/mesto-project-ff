@@ -1,6 +1,6 @@
 import { initialCards } from "./components/cards.js";
 
-import { createCard, delCard, OpPopup } from "./components/card.js";
+import { createCard, delCard, OpPopup, lkCard} from "./components/card.js";
 
 import { openModal, closeModal } from "./components/modal.js";
 
@@ -23,6 +23,7 @@ const nameInput = document.querySelector(".popup__input_type_name");
 const jobInput = document.querySelector(".popup__input_type_description");
 
 // Dom узлы создания новой карточки;
+
 const popupTypeNewCard = document.querySelector(".popup_type_new-card");
 const popupFormPlace = popupTypeNewCard.querySelector(".popup__form");
 const popupFormName = popupTypeNewCard.querySelector(
@@ -30,14 +31,16 @@ const popupFormName = popupTypeNewCard.querySelector(
 );
 const popupFormLink = popupTypeNewCard.querySelector(".popup__input_type_url");
 const openAddButton = document.querySelector(".profile__add-button");
+
 //Вывод дефолтных карточек на страницу;
 
 initialCards.forEach((arrElem) => {
   // перебрал массив объектов initialCards;
-  container.append(createCard(arrElem, delCard, OpPopup)); //добавляем в конец .places__list карточки;
+  container.append(createCard(arrElem, delCard, OpPopup, lkCard)); //добавляем в конец .places__list карточки;
 });
 
 // Функция попапа редактирования профиля;
+
 const popupEdit = function (openButton, popupForm) {
   // Слушатель открытия попапа редактирования профиля;
 
@@ -57,12 +60,14 @@ const popupEdit = function (openButton, popupForm) {
   }
 
   //Слушатель сохранения внесенных в формы изменений при закрытии попапа;
+
   popupForm.addEventListener("submit", handleFormSubmit);
 };
 
 popupEdit(openEditButton, popupFormEdit);
 
 // функция открытия попапа
+
 const clickOpenButton = function (button, popup) {
   button.addEventListener("click", function () {
     openModal(popup);
@@ -72,6 +77,7 @@ const clickOpenButton = function (button, popup) {
 clickOpenButton(openAddButton, popupTypeNewCard);
 
 //Функция сохранения внесенных в форму попапа данных
+
 popupFormPlace.addEventListener("submit", function (event) {
   event.preventDefault();
   renderNewCard({
@@ -82,8 +88,9 @@ popupFormPlace.addEventListener("submit", function (event) {
   closeModal(popupTypeNewCard);
 });
 // Функция добавления новой карточки в начало .places__list;
+
 const renderNewCard = function (newArrElem) {
-  container.prepend(createCard(newArrElem, delCard, OpPopup));
+  container.prepend(createCard(newArrElem, delCard, OpPopup, lkCard));
 };
 
 // функция закрытия всех попапов на крестик;

@@ -7,12 +7,13 @@ const popupTitle = document.querySelector(".popup__caption");
 
 // Функция создания карточки
 
-const createCard = function (arrayElement, deleteCard, OpenPopup) {
+const createCard = function (arrayElement, deleteCard, OpenPopup, likeCard) {
   const cardElement = template.querySelector(".card").cloneNode(true); // клонирую шаблон tamplate
 
   const cardImage = cardElement.querySelector(".card__image");
   const cardTitle = cardElement.querySelector(".card__title");
   const delButton = cardElement.querySelector(".card__delete-button");
+  const likeButton = cardElement.querySelector(".card__like-button");
 
   cardTitle.textContent = arrayElement.name; //добавил название картинки из initialCards
   cardImage.src = arrayElement.link; //добавил адрес картинки из initialCards
@@ -23,11 +24,15 @@ const createCard = function (arrayElement, deleteCard, OpenPopup) {
 
   cardImage.addEventListener("click", OpenPopup);
 
+  likeButton.addEventListener("click", likeCard);
+
   delButton.addEventListener("click", deleteCard); //добавил к иконке удаления обработчик клика, по которому будет вызван переданный в аргументах колбэк.
+
   return cardElement;
 };
 
 // функция открытия попапа карточки
+
 const OpPopup = function (event) {
   openModal(popupTypeImage);
   popupTitle.textContent = event.target.closest(".card").textContent;
@@ -36,8 +41,14 @@ const OpPopup = function (event) {
 };
 
 // Функция удаления карточки
+
 const delCard = function (event) {
   event.target.closest(".card").remove();
 };
+// Функция лайка карточки
 
-export { createCard, delCard, OpPopup };
+const lkCard = function (event) {
+  event.target.classList.toggle("card__like-button_is-active");
+};
+
+export { createCard, delCard, OpPopup, lkCard };
