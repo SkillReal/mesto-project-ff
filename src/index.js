@@ -1,6 +1,10 @@
 import { initialCards } from "./components/cards.js";
 
-import { createCard, delCard, OpPopup, lkCard} from "./components/card.js";
+import {
+  createCard,
+  handleDeleteCard,
+  handleLikeCard,
+} from "./components/card.js";
 
 import { openModal, closeModal } from "./components/modal.js";
 
@@ -9,62 +13,66 @@ import "./pages/index.css";
 // DOM узлы;
 
 const container = document.querySelector(".places__list");
-const closeButton = document.querySelectorAll(".popup__close");
-const generalPopup = document.querySelectorAll(".popup");
+const profileCloseButtons = document.querySelectorAll(".popup__close");
+const generalPopups = document.querySelectorAll(".popup");
 
 // Dom узлы редактирования профиля;
 
 const nameProfile = document.querySelector(".profile__title");
 const jobProfile = document.querySelector(".profile__description");
 const popupTypeEdit = document.querySelector(".popup_type_edit");
-const popupFormEdit = popupTypeEdit.querySelector(".popup__form");
-const openEditButton = document.querySelector(".profile__edit-button");
-const nameInput = document.querySelector(".popup__input_type_name");
-const jobInput = document.querySelector(".popup__input_type_description");
+const profileForm = document.forms["edit-profile"];
+const openProfileFormButton = document.querySelector(".profile__edit-button");
+const profileFormName = document.querySelector(".popup__input_type_name");
+const profileFormjob = document.querySelector(".popup__input_type_description");
 
 // Dom узлы создания новой карточки;
 
 const popupTypeNewCard = document.querySelector(".popup_type_new-card");
-const popupFormPlace = popupTypeNewCard.querySelector(".popup__form");
-const popupFormName = popupTypeNewCard.querySelector(
-  ".popup__input_type_card-name"
-);
-const popupFormLink = popupTypeNewCard.querySelector(".popup__input_type_url");
+const placeForm = document.forms["new-place"];
+const placeFormName = popupTypeNewCard.querySelector(".popup__input_type_card-name");
+const placeFormLink = popupTypeNewCard.querySelector(".popup__input_type_url");
 const openAddButton = document.querySelector(".profile__add-button");
+
+// Dom узлы  картинки;
+
+const popupTypeImage = document.querySelector(".popup_type_image");
+const popupImage = document.querySelector(".popup__image");
+const popupTitle = document.querySelector(".popup__caption");
 
 //Вывод дефолтных карточек на страницу;
 
 initialCards.forEach((arrElem) => {
   // перебрал массив объектов initialCards;
-  container.append(createCard(arrElem, delCard, OpPopup, lkCard)); //добавляем в конец .places__list карточки;
+  container.append(createCard(arrElem, handleDeleteCard, handleLikeCard)); //добавляем в конец .places__list карточки;
 });
 
 // Функция попапа редактирования профиля;
 
-const popupEdit = function (openButton, popupForm) {
+const editPopup = function (openButton, popupForm) {
   // Слушатель открытия попапа редактирования профиля;
 
   openButton.addEventListener("click", function () {
     openModal(popupTypeEdit);
-    nameInput.value = nameProfile.textContent;
-    jobInput.value = jobProfile.textContent;
+    profileFormName.value = nameProfile.textContent;
+    profileFormjob.value = jobProfile.textContent;
   });
 
   //Функция сохранения внесенных в формы изменений при закрытии попапа;
 
-  function handleFormSubmit(evt) {
+  function handleProfileFormSubmit(evt) {
     evt.preventDefault();
-    nameProfile.textContent = nameInput.value;
-    jobProfile.textContent = jobInput.value;
+    nameProfile.textContent = profileFormName.value;
+    jobProfile.textContent = profileFormjob.value;
     closeModal(popupTypeEdit);
   }
 
   //Слушатель сохранения внесенных в формы изменений при закрытии попапа;
 
-  popupForm.addEventListener("submit", handleFormSubmit);
+  popupForm.addEventListener("submit", handleProfileFormSubmit);
 };
 
-popupEdit(openEditButton, popupFormEdit);
+editPopup(openProfileFormButton, profileForm);
 
 // функция открытия попапа
 
@@ -78,11 +86,11 @@ clickOpenButton(openAddButton, popupTypeNewCard);
 
 //Функция сохранения внесенных в форму попапа данных
 
-popupFormPlace.addEventListener("submit", function (event) {
+placeForm.addEventListener("submit", function (event) {
   event.preventDefault();
   renderNewCard({
-    name: popupFormName.value,
-    link: popupFormLink.value,
+    name: placeFormName.value,
+    link: placeFormLink.value,
   });
   event.target.reset();
   closeModal(popupTypeNewCard);
@@ -90,12 +98,12 @@ popupFormPlace.addEventListener("submit", function (event) {
 // Функция добавления новой карточки в начало .places__list;
 
 const renderNewCard = function (newArrElem) {
-  container.prepend(createCard(newArrElem, delCard, OpPopup, lkCard));
+  container.prepend(createCard(newArrElem, handleDeleteCard, handleLikeCard));
 };
 
 // функция закрытия всех попапов на крестик;
 
-closeButton.forEach(function (item) {
+profileCloseButtons.forEach(function (item) {
   // перебрал псевдомассив кнопок закрытия попапов;
   item.addEventListener("click", function (event) {
     const popup = event.target.closest(".popup"); //нашел открытый попап для закрытия;
@@ -105,13 +113,25 @@ closeButton.forEach(function (item) {
 
 // функция закрытия всех попапов кликом на оверлей;
 
-generalPopup.forEach(function (item) {
-  item.addEventListener("click", function (evt) {
-    const popup = evt.target.closest(".popup");
-    if (evt.currentTarget === evt.target) {
-      closeModal(popup);
+generalPopups.forEach(function (item) {
+  item.addEventListener("click", function (event) {
+    if (event.currentTarget === event.target) {
+      closeModal(item);
     }
   });
 });
 // evt.currentTarget — элемент, где сработал обработчик;
 // evt.target — элемент, где возникло событие;
+
+// функция открытия попапа карточки
+
+function handleImageClick(image) {
+  image.addEventListener("click", (event) => {
+    openModal(popupTypeImage);
+    popupTitle.textContent = event.target.closest(".card").textContent;
+    popupImage.src = event.target.closest(".card__image").src;
+    popupImage.alt = event.target.closest(".card__image").alt;
+  });
+}
+
+export { handleImageClick };

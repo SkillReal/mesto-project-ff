@@ -1,13 +1,10 @@
-import { openModal } from "./modal.js";
+import { handleImageClick } from "../index.js";
 
 const template = document.querySelector("#card-template").content;
-const popupTypeImage = document.querySelector(".popup_type_image");
-const popupImage = document.querySelector(".popup__image");
-const popupTitle = document.querySelector(".popup__caption");
 
 // Функция создания карточки
 
-const createCard = function (arrayElement, deleteCard, OpenPopup, likeCard) {
+const createCard = function (arrayElement, deleteCard, likeCard) {
   const cardElement = template.querySelector(".card").cloneNode(true); // клонирую шаблон tamplate
 
   const cardImage = cardElement.querySelector(".card__image");
@@ -22,7 +19,7 @@ const createCard = function (arrayElement, deleteCard, OpenPopup, likeCard) {
     "Картинка с видом на" + " " + arrayElement.name
   ); //добавил атрибут alt для получаемой картинки
 
-  cardImage.addEventListener("click", OpenPopup);
+  handleImageClick(cardImage);
 
   likeButton.addEventListener("click", likeCard);
 
@@ -31,24 +28,15 @@ const createCard = function (arrayElement, deleteCard, OpenPopup, likeCard) {
   return cardElement;
 };
 
-// функция открытия попапа карточки
-
-const OpPopup = function (event) {
-  openModal(popupTypeImage);
-  popupTitle.textContent = event.target.closest(".card").textContent;
-  popupImage.src = event.target.closest(".card__image").src;
-  popupImage.alt = event.target.closest(".card__image").alt;
-};
-
 // Функция удаления карточки
 
-const delCard = function (event) {
+const handleDeleteCard = function (event) {
   event.target.closest(".card").remove();
 };
 // Функция лайка карточки
 
-const lkCard = function (event) {
+const handleLikeCard = function (event) {
   event.target.classList.toggle("card__like-button_is-active");
 };
 
-export { createCard, delCard, OpPopup, lkCard };
+export { createCard, handleDeleteCard, handleLikeCard };
