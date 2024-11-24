@@ -30,7 +30,9 @@ const profileFormjob = document.querySelector(".popup__input_type_description");
 
 const popupTypeNewCard = document.querySelector(".popup_type_new-card");
 const placeForm = document.forms["new-place"];
-const placeFormName = popupTypeNewCard.querySelector(".popup__input_type_card-name");
+const placeFormName = popupTypeNewCard.querySelector(
+  ".popup__input_type_card-name"
+);
 const placeFormLink = popupTypeNewCard.querySelector(".popup__input_type_url");
 const openAddButton = document.querySelector(".profile__add-button");
 
@@ -44,12 +46,14 @@ const popupTitle = document.querySelector(".popup__caption");
 
 initialCards.forEach((arrElem) => {
   // перебрал массив объектов initialCards;
-  container.append(createCard(arrElem, handleDeleteCard, handleLikeCard)); //добавляем в конец .places__list карточки;
+  container.append(
+    createCard(arrElem, handleDeleteCard, handleLikeCard, handleImageClick)
+  ); //добавляем в конец .places__list карточки;
 });
 
 // Функция попапа редактирования профиля;
 
-const editPopup = function (openButton, popupForm) {
+const handleProfilePopup = function (openButton, popupForm) {
   // Слушатель открытия попапа редактирования профиля;
 
   openButton.addEventListener("click", function () {
@@ -72,7 +76,7 @@ const editPopup = function (openButton, popupForm) {
   popupForm.addEventListener("submit", handleProfileFormSubmit);
 };
 
-editPopup(openProfileFormButton, profileForm);
+handleProfilePopup(openProfileFormButton, profileForm);
 
 // функция открытия попапа
 
@@ -98,7 +102,9 @@ placeForm.addEventListener("submit", function (event) {
 // Функция добавления новой карточки в начало .places__list;
 
 const renderNewCard = function (newArrElem) {
-  container.prepend(createCard(newArrElem, handleDeleteCard, handleLikeCard));
+  container.prepend(
+    createCard(newArrElem, handleDeleteCard, handleLikeCard, handleImageClick)
+  );
 };
 
 // функция закрытия всех попапов на крестик;
@@ -125,13 +131,9 @@ generalPopups.forEach(function (item) {
 
 // функция открытия попапа карточки
 
-function handleImageClick(image) {
-  image.addEventListener("click", (event) => {
-    openModal(popupTypeImage);
-    popupTitle.textContent = event.target.closest(".card").textContent;
-    popupImage.src = event.target.closest(".card__image").src;
-    popupImage.alt = event.target.closest(".card__image").alt;
-  });
+function handleImageClick(element) {
+  openModal(popupTypeImage);
+  popupTitle.textContent = element.name;
+  popupImage.src = element.link;
+  popupImage.alt = `Картинка с видом на ${element.name}`;
 }
-
-export { handleImageClick };

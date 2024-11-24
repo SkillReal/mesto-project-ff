@@ -1,10 +1,8 @@
-import { handleImageClick } from "../index.js";
-
 const template = document.querySelector("#card-template").content;
 
 // Функция создания карточки
 
-const createCard = function (arrayElement, deleteCard, likeCard) {
+const createCard = function (arrayElement, deleteCard, likeCard, openCardImage) {
   const cardElement = template.querySelector(".card").cloneNode(true); // клонирую шаблон tamplate
 
   const cardImage = cardElement.querySelector(".card__image");
@@ -19,11 +17,11 @@ const createCard = function (arrayElement, deleteCard, likeCard) {
     "Картинка с видом на" + " " + arrayElement.name
   ); //добавил атрибут alt для получаемой картинки
 
-  handleImageClick(cardImage);
+  cardImage.addEventListener("click", () => openCardImage(arrayElement));
+
+  delButton.addEventListener("click", deleteCard); //добавил к иконке удаления обработчик клика, по которому будет вызван переданный в аргументах колбэк;
 
   likeButton.addEventListener("click", likeCard);
-
-  delButton.addEventListener("click", deleteCard); //добавил к иконке удаления обработчик клика, по которому будет вызван переданный в аргументах колбэк.
 
   return cardElement;
 };
