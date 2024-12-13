@@ -8,6 +8,8 @@ import {
 
 import { openModal, closeModal } from "./components/modal.js";
 
+import {enableValidation, clearValidation} from "./components/validation.js";
+
 import "./pages/index.css";
 
 // DOM узлы;
@@ -42,6 +44,26 @@ const popupTypeImage = document.querySelector(".popup_type_image");
 const popupImage = document.querySelector(".popup__image");
 const popupTitle = document.querySelector(".popup__caption");
 
+// Валидация форм
+
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+}
+
+// Dom узлы форм;
+
+
+
+enableValidation(validationConfig);
+
+
+
+
 //Вывод дефолтных карточек на страницу;
 
 initialCards.forEach((arrElem) => {
@@ -60,6 +82,7 @@ const handleProfilePopup = function (openButton, popupForm) {
     openModal(popupTypeEdit);
     profileFormName.value = nameProfile.textContent;
     profileFormjob.value = jobProfile.textContent;
+    clearValidation(popupForm, validationConfig);
   });
 
   //Функция сохранения внесенных в формы изменений при закрытии попапа;
@@ -78,15 +101,14 @@ const handleProfilePopup = function (openButton, popupForm) {
 
 handleProfilePopup(openProfileFormButton, profileForm);
 
-// функция открытия попапа
+// функция открытия попапа добавления новой карточки
 
-const clickOpenButton = function (button, popup) {
-  button.addEventListener("click", function () {
-    openModal(popup);
-  });
-};
-
-clickOpenButton(openAddButton, popupTypeNewCard);
+openAddButton.addEventListener("click", function () {
+  openModal(popupTypeNewCard);   
+  placeFormName.value = "";
+  placeFormLink.value = "";
+  clearValidation(placeForm, validationConfig);
+});
 
 //Функция сохранения внесенных в форму попапа данных
 
@@ -97,6 +119,7 @@ placeForm.addEventListener("submit", function (event) {
     link: placeFormLink.value,
   });
   event.target.reset();
+  clearValidation(placeForm, validationConfig);
   closeModal(popupTypeNewCard);
 });
 // Функция добавления новой карточки в начало .places__list;
