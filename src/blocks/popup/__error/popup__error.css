@@ -1,5 +1,7 @@
 .popup__error {
     visibility: hidden;
+    display: block;
+    min-block-size: 30px;
     font-family: 'Inter';
     font-size: 12px;
     font-style: normal;

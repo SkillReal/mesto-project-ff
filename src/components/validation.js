@@ -43,7 +43,6 @@ const hasInvalidInput = (inputList) => {
   });
 };
 
-
 // Функция включения и выключения кнопки отправки формы;
 
 const toggleButtonState = (inputList, buttonElement, settings) => {
@@ -101,4 +100,4 @@ const enableValidation = (settings) => {
   });
 };
 
-export { enableValidation, clearValidation};
+export { enableValidation, clearValidation };

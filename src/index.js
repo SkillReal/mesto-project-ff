@@ -8,7 +8,14 @@ import {
 
 import { openModal, closeModal } from "./components/modal.js";
 
-import {enableValidation, clearValidation} from "./components/validation.js";
+import { enableValidation, clearValidation } from "./components/validation.js";
+
+import {
+  getUserData,
+  getInitialCards,
+  patchProfile,
+  postCard
+} from "./components/api.js";
 
 import "./pages/index.css";
 
@@ -18,10 +25,11 @@ const container = document.querySelector(".places__list");
 const profileCloseButtons = document.querySelectorAll(".popup__close");
 const generalPopups = document.querySelectorAll(".popup");
 
-// Dom узлы редактирования профиля;
+// Dom узлы профиля;
 
-const nameProfile = document.querySelector(".profile__title");
-const jobProfile = document.querySelector(".profile__description");
+const profileImage = document.querySelector(".profile__image");
+const profileName = document.querySelector(".profile__title");
+const profileJob = document.querySelector(".profile__description");
 const popupTypeEdit = document.querySelector(".popup_type_edit");
 const profileForm = document.forms["edit-profile"];
 const openProfileFormButton = document.querySelector(".profile__edit-button");
@@ -47,22 +55,15 @@ const popupTitle = document.querySelector(".popup__caption");
 // Валидация форм
 
 const validationConfig = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible'
-}
-
-// Dom узлы форм;
-
-
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
+};
 
 enableValidation(validationConfig);
-
-
-
 
 //Вывод дефолтных карточек на страницу;
 
@@ -73,6 +74,23 @@ initialCards.forEach((arrElem) => {
   ); //добавляем в конец .places__list карточки;
 });
 
+getInitialCards().then((data) => {
+  const array = Array.from(data);
+  array.forEach((arrElem) => {
+    container.prepend(
+      createCard(arrElem, handleDeleteCard, handleLikeCard, handleImageClick)
+    );
+  });
+});
+
+//Загрузка данных профиля с сервераж
+
+getUserData().then((data) => {
+  profileName.textContent = data.name;
+  profileJob.textContent = data.about;
+  profileImage.style.backgroundImage = `url(${data.avatar})`;
+});
+
 // Функция попапа редактирования профиля;
 
 const handleProfilePopup = function (openButton, popupForm) {
@@ -80,18 +98,23 @@ const handleProfilePopup = function (openButton, popupForm) {
 
   openButton.addEventListener("click", function () {
     openModal(popupTypeEdit);
-    profileFormName.value = nameProfile.textContent;
-    profileFormjob.value = jobProfile.textContent;
+    profileFormName.value = profileName.textContent;
+    profileFormjob.value = profileJob.textContent;
     clearValidation(popupForm, validationConfig);
   });
 
-  //Функция сохранения внесенных в формы изменений при закрытии попапа;
+  //Функция сохранения на сервер внесенных в формы изменений при закрытии попапа;
 
   function handleProfileFormSubmit(evt) {
     evt.preventDefault();
-    nameProfile.textContent = profileFormName.value;
-    jobProfile.textContent = profileFormjob.value;
-    closeModal(popupTypeEdit);
+    patchProfile(profileFormName.value, profileFormjob.value)
+      .then((data) => {
+        profileName.textContent = data.name;
+        profileJob.textContent = data.about;
+      })
+      .then(() => {
+        closeModal(popupTypeEdit);
+      });
   }
 
   //Слушатель сохранения внесенных в формы изменений при закрытии попапа;
@@ -101,27 +124,37 @@ const handleProfilePopup = function (openButton, popupForm) {
 
 handleProfilePopup(openProfileFormButton, profileForm);
 
-// функция открытия попапа добавления новой карточки
+// функция открытия попапа добавления новой карточки;
 
 openAddButton.addEventListener("click", function () {
-  openModal(popupTypeNewCard);   
+  openModal(popupTypeNewCard);
   placeFormName.value = "";
   placeFormLink.value = "";
   clearValidation(placeForm, validationConfig);
 });
 
-//Функция сохранения внесенных в форму попапа данных
+//Функция сохранения внесенных в форму попапа данных;
 
 placeForm.addEventListener("submit", function (event) {
   event.preventDefault();
-  renderNewCard({
+  const cardItem = {
     name: placeFormName.value,
-    link: placeFormLink.value,
+    link: placeFormLink.value
+  };
+  postCard(cardItem)
+  .then((data) => {
+    const newCard = {
+      name: data.name,
+      link: data.link
+    }
+    renderNewCard(newCard)
+    event.target.reset();
+  })
+  .then(() => {
+    closeModal(popupTypeNewCard);
   });
-  event.target.reset();
-  clearValidation(placeForm, validationConfig);
-  closeModal(popupTypeNewCard);
 });
+
 // Функция добавления новой карточки в начало .places__list;
 
 const renderNewCard = function (newArrElem) {
