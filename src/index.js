@@ -110,16 +110,12 @@ Promise.all([getUserData(), getInitialCards()])
 // Функция попапа редактирования профиля;
 
 const handleProfilePopup = function (openButton, popupForm, formButton) {
-  // Слушатель открытия попапа редактирования текстовых данных профиля;
-
   openButton.addEventListener("click", function () {
     openModal(popupTypeEdit);
     profileFormName.value = profileName.textContent;
     profileFormjob.value = profileJob.textContent;
     clearValidation(popupForm, validationConfig);
   });
-
-  //Функция сохранения на сервер внесенных в формы изменений при закрытии попапа;
 
   function handleProfileFormSubmit(event) {
     event.preventDefault();
@@ -139,8 +135,6 @@ const handleProfilePopup = function (openButton, popupForm, formButton) {
         setButtonMessage(formButton, "Сохранить");
       });
   }
-
-  //Слушатель сохранения внесенных в формы изменений при закрытии попапа;
 
   popupForm.addEventListener("submit", handleProfileFormSubmit);
 };
@@ -184,7 +178,7 @@ handleProfileAvatarPopup(
   profileAvatarFormButton
 );
 
-// функция открытия попапа добавления новой карточки;
+// функция попапа добавления новой карточки;
 
 const handleCardPopup = function (openButton, popupForm, formButton) {
   openButton.addEventListener("click", function () {
@@ -193,8 +187,6 @@ const handleCardPopup = function (openButton, popupForm, formButton) {
     placeFormLink.value = "";
     clearValidation(placeForm, validationConfig);
   });
-
-  //Функция сохранения внесенных в форму попапа данных;
 
   function handleCardFormSubmit(event) {
     event.preventDefault();
