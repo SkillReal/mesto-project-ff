@@ -1,9 +1,7 @@
-const template = document.querySelector("#card-template").content;
-
 import { updateLikeCard, deleteCard } from "./api.js";
 
+const template = document.querySelector("#card-template").content;
 // Функция создания карточки
-
 const createCard = function (
   arrayElement,
   removeCard,
@@ -18,14 +16,13 @@ const createCard = function (
   const cardTitle = cardElement.querySelector(".card__title");
   const delButton = cardElement.querySelector(".card__delete-button");
   const likeButton = cardElement.querySelector(".card__like-button");
-  
 
   cardTitle.textContent = arrayElement.name; //добавил название картинки из initialCards
-  cardImage.src = arrayElement.link; 
+  cardImage.src = arrayElement.link;
   cardImage.setAttribute(
     "alt",
     "Картинка с видом на" + " " + arrayElement.name
-  ); 
+  );
   if (arrayElement.likes.length > 0) {
     cardLikeNumber.textContent = arrayElement.likes.length;
   } else {
@@ -36,7 +33,7 @@ const createCard = function (
 
   if (arrayElement.likes.find((item) => item["_id"] === userId)) {
     likeButton.classList.add("card__like-button_is-active");
-  };
+  }
 
   likeButton.addEventListener("click", () => {
     likeCard(likeButton, arrayElement._id, cardLikeNumber);
@@ -49,7 +46,7 @@ const createCard = function (
       removeCard(event.target.closest(".card"), arrayElement._id);
     });
   }
-  
+
   return cardElement;
 };
 
@@ -58,8 +55,8 @@ const createCard = function (
 function handleDeleteCard(card, id) {
   deleteCard(id).then(() => {
     card.remove();
-  })
-};
+  });
+}
 // Функция лайка карточки
 
 const handleLikeCard = function (button, id, likeNum) {

@@ -20,7 +20,9 @@
       </header>
       <main class="content">
         <section class="profile page__section">
-          <img class="profile__image" />
+          <div class="profile__image">
+            <button class="profile__image_edit-button" type="button"></button>
+          </div>
           <div class="profile__info">
             <h1 class="profile__title"></h1>
             <button class="profile__edit-button" type="button"></button>
@@ -109,6 +111,28 @@
           </form>
         </div>
       </div>
+
+      <div class="popup popup_type_edit-avatar">
+        <div class="popup__content">
+          <button type="button" class="popup__close"></button>
+          <h3 class="popup__title">Обновить аватар</h3>
+          <form novalidate class="popup__form" name="edit-avatar">
+            <input
+              id="avatar-url"
+              type="url"
+              name="link"
+              class="popup__input popup__input_type_url"
+              placeholder="Ссылка на картинку"
+              required
+            />
+            <span class="popup__error popup__error_avatar-url"></span>
+            <button type="submit" class="button popup__button">
+              Сохранить
+            </button>
+          </form>
+        </div>
+      </div>
+
       <div class="popup popup_type_image">
         <div class="popup__content popup__content_content_image">
           <button type="button" class="popup__close"></button>
@@ -126,7 +150,7 @@
           <h2 class="card__title"></h2>
           <div class="card__like-container">
             <button type="button" class="card__like-button"></button>
-            <span class="card__likes-number">0</span>
+            <span class="card__likes-number"></span>
           </div>
         </div>
       </li>

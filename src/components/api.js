@@ -31,26 +31,33 @@ const request = (url, methodValue, bodyData) => {
 };
 
 export function getUserData() {
-  return request(`${config.baseUrl}/users/me`,"GET");
+  return request(`${config.baseUrl}/users/me`, "GET");
 }
 
 export function getInitialCards() {
-  return request(`${config.baseUrl}/cards`,"GET");
+  return request(`${config.baseUrl}/cards`, "GET");
 }
 
 export function patchProfile(name, job) {
-  return request(`${config.baseUrl}/users/me`,"PATCH", {name: name, about: job});
+  return request(`${config.baseUrl}/users/me`, "PATCH", {
+    name: name,
+    about: job,
+  });
 }
 
-export function postCard({name, link}) {
-  return request(`${config.baseUrl}/cards`,'POST', {name, link});
+export function postCard({ name, link }) {
+  return request(`${config.baseUrl}/cards`, "POST", { name, link });
 }
 
 export function deleteCard(cardId) {
-  return request(`${config.baseUrl}/cards/${cardId}`,'DELETE');
+  return request(`${config.baseUrl}/cards/${cardId}`, "DELETE");
 }
 
 export function updateLikeCard(cardId, condition) {
- const method = condition ? "DELETE" : "PUT"
+  const method = condition ? "DELETE" : "PUT";
   return request(`${config.baseUrl}/cards/likes/${cardId}`, method);
+}
+
+export function patchAvatar(url) {
+  return request(`${config.baseUrl}/users/me/avatar`, "PATCH", { avatar: url });
 }

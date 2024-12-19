@@ -13,6 +13,7 @@ import {
   getInitialCards,
   patchProfile,
   postCard,
+  patchAvatar,
 } from "./components/api.js";
 
 import "./pages/index.css";
@@ -20,7 +21,7 @@ import "./pages/index.css";
 // DOM узлы;
 
 const container = document.querySelector(".places__list");
-const profileCloseButtons = document.querySelectorAll(".popup__close");
+const popupCloseButtons = document.querySelectorAll(".popup__close");
 const generalPopups = document.querySelectorAll(".popup");
 
 // Dom узлы профиля;
@@ -30,19 +31,34 @@ const profileName = document.querySelector(".profile__title");
 const profileJob = document.querySelector(".profile__description");
 const popupTypeEdit = document.querySelector(".popup_type_edit");
 const profileForm = document.forms["edit-profile"];
-const openProfileFormButton = document.querySelector(".profile__edit-button");
+const profileFormButton = profileForm.querySelector(".popup__button");
+const openProfilePopupButton = document.querySelector(".profile__edit-button");
 const profileFormName = document.querySelector(".popup__input_type_name");
 const profileFormjob = document.querySelector(".popup__input_type_description");
+
+// Dom узлы аватара профиля;
+
+const popupTypeEditAvatar = document.querySelector(".popup_type_edit-avatar");
+const profileAvatarForm = document.forms["edit-avatar"];
+const profileAvatarFormButton =
+  profileAvatarForm.querySelector(".popup__button");
+const profileAvatarFormLink = popupTypeEditAvatar.querySelector(
+  ".popup__input_type_url"
+);
+const openProfileAvatarPopupButton = document.querySelector(
+  ".profile__image_edit-button"
+);
 
 // Dom узлы создания новой карточки;
 
 const popupTypeNewCard = document.querySelector(".popup_type_new-card");
 const placeForm = document.forms["new-place"];
+const placeFormButton = placeForm.querySelector(".popup__button");
 const placeFormName = popupTypeNewCard.querySelector(
   ".popup__input_type_card-name"
 );
 const placeFormLink = popupTypeNewCard.querySelector(".popup__input_type_url");
-const openAddButton = document.querySelector(".profile__add-button");
+const openPlacePopupButton = document.querySelector(".profile__add-button");
 
 // Dom узлы  картинки;
 
@@ -67,6 +83,10 @@ enableValidation(validationConfig);
 
 let myId = "";
 
+function setButtonMessage(button, message) {
+  button.textContent = message;
+}
+
 Promise.all([getUserData(), getInitialCards()])
   .then(([userData, cards]) => {
     profileName.textContent = userData.name;
@@ -89,8 +109,8 @@ Promise.all([getUserData(), getInitialCards()])
 
 // Функция попапа редактирования профиля;
 
-const handleProfilePopup = function (openButton, popupForm) {
-  // Слушатель открытия попапа редактирования профиля;
+const handleProfilePopup = function (openButton, popupForm, formButton) {
+  // Слушатель открытия попапа редактирования текстовых данных профиля;
 
   openButton.addEventListener("click", function () {
     openModal(popupTypeEdit);
@@ -101,8 +121,9 @@ const handleProfilePopup = function (openButton, popupForm) {
 
   //Функция сохранения на сервер внесенных в формы изменений при закрытии попапа;
 
-  function handleProfileFormSubmit(evt) {
-    evt.preventDefault();
+  function handleProfileFormSubmit(event) {
+    event.preventDefault();
+    setButtonMessage(formButton, "Сохранение...");
     patchProfile(profileFormName.value, profileFormjob.value)
       .then((data) => {
         profileName.textContent = data.name;
@@ -110,6 +131,12 @@ const handleProfilePopup = function (openButton, popupForm) {
       })
       .then(() => {
         closeModal(popupTypeEdit);
+      })
+      .catch((data) =>
+        alert(`${data} - ошибка записи данных профиля на сервер`)
+      )
+      .finally(() => {
+        setButtonMessage(formButton, "Сохранить");
       });
   }
 
@@ -118,39 +145,89 @@ const handleProfilePopup = function (openButton, popupForm) {
   popupForm.addEventListener("submit", handleProfileFormSubmit);
 };
 
-handleProfilePopup(openProfileFormButton, profileForm);
+handleProfilePopup(openProfilePopupButton, profileForm, profileFormButton);
+
+//Функция попапа редактирования аватара профиля;
+
+const handleProfileAvatarPopup = function (openButton, popupForm, formButton) {
+  openButton.addEventListener("click", function () {
+    openModal(popupTypeEditAvatar);
+    profileAvatarFormLink.value = "";
+    clearValidation(popupForm, validationConfig);
+  });
+
+  function handleProfileAvatarFormSubmit(event) {
+    event.preventDefault();
+    setButtonMessage(formButton, "Сохранение...");
+    patchAvatar(profileAvatarFormLink.value)
+      .then((data) => {
+        profileImage.style.backgroundImage = `url(${data.avatar})`;
+        event.target.reset();
+      })
+      .then(() => {
+        closeModal(popupTypeEditAvatar);
+      })
+      .catch((data) =>
+        alert(`${data} - ошибка записи аватара профиля на сервер`)
+      )
+      .finally(() => {
+        setButtonMessage(formButton, "Сохранить");
+      });
+  }
+
+  popupForm.addEventListener("submit", handleProfileAvatarFormSubmit);
+};
+
+handleProfileAvatarPopup(
+  openProfileAvatarPopupButton,
+  profileAvatarForm,
+  profileAvatarFormButton
+);
 
 // функция открытия попапа добавления новой карточки;
 
-openAddButton.addEventListener("click", function () {
-  openModal(popupTypeNewCard);
-  placeFormName.value = "";
-  placeFormLink.value = "";
-  clearValidation(placeForm, validationConfig);
-});
+const handleCardPopup = function (openButton, popupForm, formButton) {
+  openButton.addEventListener("click", function () {
+    openModal(popupTypeNewCard);
+    placeFormName.value = "";
+    placeFormLink.value = "";
+    clearValidation(placeForm, validationConfig);
+  });
 
-//Функция сохранения внесенных в форму попапа данных;
+  //Функция сохранения внесенных в форму попапа данных;
 
-placeForm.addEventListener("submit", function (event) {
-  event.preventDefault();
-  const cardItem = {
-    name: placeFormName.value,
-    link: placeFormLink.value,
-  };
-  postCard(cardItem)
-    .then((data) => {
-      renderNewCard(data);
-      event.target.reset();
-    })
-    .then(() => {
-      closeModal(popupTypeNewCard);
-    });
-});
+  function handleCardFormSubmit(event) {
+    event.preventDefault();
+    setButtonMessage(formButton, "Сохранение...");
+    const cardItem = {
+      name: placeFormName.value,
+      link: placeFormLink.value,
+    };
+    postCard(cardItem)
+      .then((data) => {
+        renderNewCard(data);
+        event.target.reset();
+      })
+      .then(() => {
+        closeModal(popupTypeNewCard);
+      })
+      .catch((data) =>
+        alert(`${data} - ошибка записи данных карточки на сервер`)
+      )
+      .finally(() => {
+        setButtonMessage(formButton, "Сохранить");
+      });
+  }
 
-// Функция добавления новой карточки в начало .places__list;
+  popupForm.addEventListener("submit", handleCardFormSubmit);
+};
+
+handleCardPopup(openPlacePopupButton, placeForm, placeFormButton);
+
+// Функция добавления новой карточки в конец .places__list;
 
 const renderNewCard = function (newArrElem) {
-  container.prepend(
+  container.append(
     createCard(
       newArrElem,
       handleDeleteCard,
@@ -163,7 +240,7 @@ const renderNewCard = function (newArrElem) {
 
 // функция закрытия всех попапов на крестик;
 
-profileCloseButtons.forEach(function (item) {
+popupCloseButtons.forEach(function (item) {
   // перебрал псевдомассив кнопок закрытия попапов;
   item.addEventListener("click", function (event) {
     const popup = event.target.closest(".popup"); //нашел открытый попап для закрытия;
