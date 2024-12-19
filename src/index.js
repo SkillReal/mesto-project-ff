@@ -1,5 +1,3 @@
-import { initialCards } from "./components/cards.js";
-
 import {
   createCard,
   handleDeleteCard,
@@ -14,7 +12,7 @@ import {
   getUserData,
   getInitialCards,
   patchProfile,
-  postCard
+  postCard,
 } from "./components/api.js";
 
 import "./pages/index.css";
@@ -65,31 +63,29 @@ const validationConfig = {
 
 enableValidation(validationConfig);
 
-//Вывод дефолтных карточек на страницу;
+//Вывод карточек на страницу и загрузка информации о пользователе с сервера;
 
-initialCards.forEach((arrElem) => {
-  // перебрал массив объектов initialCards;
-  container.append(
-    createCard(arrElem, handleDeleteCard, handleLikeCard, handleImageClick)
-  ); //добавляем в конец .places__list карточки;
-});
+let myId = "";
 
-getInitialCards().then((data) => {
-  const array = Array.from(data);
-  array.forEach((arrElem) => {
-    container.prepend(
-      createCard(arrElem, handleDeleteCard, handleLikeCard, handleImageClick)
-    );
-  });
-});
-
-//Загрузка данных профиля с сервераж
-
-getUserData().then((data) => {
-  profileName.textContent = data.name;
-  profileJob.textContent = data.about;
-  profileImage.style.backgroundImage = `url(${data.avatar})`;
-});
+Promise.all([getUserData(), getInitialCards()])
+  .then(([userData, cards]) => {
+    profileName.textContent = userData.name;
+    profileJob.textContent = userData.about;
+    profileImage.style.backgroundImage = `url(${userData.avatar})`;
+    myId = userData._id;
+    cards.forEach((arrElem) => {
+      container.prepend(
+        createCard(
+          arrElem,
+          handleDeleteCard,
+          handleLikeCard,
+          handleImageClick,
+          myId
+        )
+      );
+    });
+  })
+  .catch((data) => alert(`${data} - ошибка получения данных с сервера`));
 
 // Функция попапа редактирования профиля;
 
@@ -139,27 +135,29 @@ placeForm.addEventListener("submit", function (event) {
   event.preventDefault();
   const cardItem = {
     name: placeFormName.value,
-    link: placeFormLink.value
+    link: placeFormLink.value,
   };
   postCard(cardItem)
-  .then((data) => {
-    const newCard = {
-      name: data.name,
-      link: data.link
-    }
-    renderNewCard(newCard)
-    event.target.reset();
-  })
-  .then(() => {
-    closeModal(popupTypeNewCard);
-  });
+    .then((data) => {
+      renderNewCard(data);
+      event.target.reset();
+    })
+    .then(() => {
+      closeModal(popupTypeNewCard);
+    });
 });
 
 // Функция добавления новой карточки в начало .places__list;
 
 const renderNewCard = function (newArrElem) {
   container.prepend(
-    createCard(newArrElem, handleDeleteCard, handleLikeCard, handleImageClick)
+    createCard(
+      newArrElem,
+      handleDeleteCard,
+      handleLikeCard,
+      handleImageClick,
+      myId
+    )
   );
 };
 

@@ -42,6 +42,15 @@ export function patchProfile(name, job) {
   return request(`${config.baseUrl}/users/me`,"PATCH", {name: name, about: job});
 }
 
-export function postCard(card) {
-  return request(`${config.baseUrl}/cards`,'POST', {name: card.name, link: card.link});
+export function postCard({name, link}) {
+  return request(`${config.baseUrl}/cards`,'POST', {name, link});
+}
+
+export function deleteCard(cardId) {
+  return request(`${config.baseUrl}/cards/${cardId}`,'DELETE');
+}
+
+export function updateLikeCard(cardId, condition) {
+ const method = condition ? "DELETE" : "PUT"
+  return request(`${config.baseUrl}/cards/likes/${cardId}`, method);
 }
