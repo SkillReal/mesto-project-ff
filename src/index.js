@@ -124,8 +124,6 @@ const handleProfilePopup = function (openButton, popupForm, formButton) {
       .then((data) => {
         profileName.textContent = data.name;
         profileJob.textContent = data.about;
-      })
-      .then(() => {
         closeModal(popupTypeEdit);
       })
       .catch((data) =>
@@ -157,8 +155,6 @@ const handleProfileAvatarPopup = function (openButton, popupForm, formButton) {
       .then((data) => {
         profileImage.style.backgroundImage = `url(${data.avatar})`;
         event.target.reset();
-      })
-      .then(() => {
         closeModal(popupTypeEditAvatar);
       })
       .catch((data) =>
@@ -199,8 +195,6 @@ const handleCardPopup = function (openButton, popupForm, formButton) {
       .then((data) => {
         renderNewCard(data);
         event.target.reset();
-      })
-      .then(() => {
         closeModal(popupTypeNewCard);
       })
       .catch((data) =>
@@ -219,7 +213,7 @@ handleCardPopup(openPlacePopupButton, placeForm, placeFormButton);
 // Функция добавления новой карточки в конец .places__list;
 
 const renderNewCard = function (newArrElem) {
-  container.append(
+  container.prepend(
     createCard(
       newArrElem,
       handleDeleteCard,

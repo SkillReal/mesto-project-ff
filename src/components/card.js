@@ -53,9 +53,13 @@ const createCard = function (
 // Функция удаления карточки
 
 function handleDeleteCard(card, id) {
-  deleteCard(id).then(() => {
-    card.remove();
-  });
+  deleteCard(id)
+    .then(() => {
+      card.remove();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }
 // Функция лайка карточки
 

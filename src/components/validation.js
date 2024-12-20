@@ -12,8 +12,10 @@ const hideInputError = (formElement, inputElement, settings) => {
     `.popup__error_${inputElement.id}`
   );
   inputElement.classList.remove(settings.inputErrorClass);
+  inputElement.setCustomValidity("");
   errorElement.classList.remove(settings.errorClass);
   errorElement.textContent = "";
+  
 };
 
 const checkInputValidity = (formElement, inputElement, settings) => {
