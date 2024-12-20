@@ -3,4 +3,4 @@
 https://github.com/SkillReal/mesto-project-ff.git
 
 
-https://SkillReal.github.io/mesto-project-ff
+Адрес проекта: https://SkillReal.github.io/mesto-project-ff
